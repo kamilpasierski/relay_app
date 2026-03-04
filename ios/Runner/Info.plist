@@ -27,6 +27,8 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>
+	<key>NSCameraUsageDescription</key>
+	<string>Aplikacja wymaga dostępu do modułu optycznego w celu skanowania kodów QR infrastruktury.</string>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
