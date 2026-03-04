@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:relay_app/core/theme/app_theme.dart';
-import 'package:relay_app/features/qr_scanner/qr_scanner_screen.dart';
+import 'package:relay_app/features/qr_scanner/presentation/screens/qr_scanner_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
