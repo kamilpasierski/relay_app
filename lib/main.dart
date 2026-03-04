@@ -4,20 +4,19 @@ import 'package:relay_app/features/authentication/presentation/screens/welcome_s
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  runApp(const RelayDebugApp());
+  runApp(const RelayApp());
 }
 
-class RelayDebugApp extends StatelessWidget {
-  const RelayDebugApp({super.key});
+class RelayApp extends StatelessWidget {
+  const RelayApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Relay Debug Build',
+      title: 'Relay Mobile',
       theme: AppTheme.lightTheme,
-      home: const WelcomeScreen(),
-      debugShowCheckedModeBanner: true, 
+      home: const WelcomeScreen(), 
+      debugShowCheckedModeBanner: true,
     );
   }
 }

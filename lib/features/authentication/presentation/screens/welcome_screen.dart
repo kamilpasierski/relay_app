@@ -1,6 +1,8 @@
+import 'package:relay_app/features/home/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:relay_app/core/theme/app_theme.dart';
 import 'package:relay_app/features/authentication/presentation/screens/login_screen.dart';
+
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -59,7 +61,14 @@ class WelcomeScreen extends StatelessWidget {
               const SizedBox(height: 16),
               
               OutlinedButton(
-                onPressed: () {},
+                onPressed: () {
+                  // Destrukcja bieżącego widoku i zastąpienie go węzłem głównym
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => const HomeScreen(),
+                    ),
+                  );
+                },
                 child: const Text('Korzystaj jako gość'),
               ),
               
