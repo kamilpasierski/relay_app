@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:relay_app/core/theme/app_theme.dart';
+import 'package:relay_app/core/widgets/custom_text_field.dart';
+import 'package:relay_app/core/widgets/primary_button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -9,106 +11,76 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  
-  bool _isPasswordObscured = true;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   void dispose() {
-    // Dealokacja zasobów pamięci operacyjnej
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
-@override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+  void _handleLogin() {
+    final email = _emailController.text;
+    final password = _passwordController.text;
 
+    debugPrint('Inicjacja procesu autoryzacji dla wektora: $email');
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.surfaceWhite,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppTheme.primaryDark),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        title: const Text('Logowanie'),
+        backgroundColor: AppTheme.primaryDark,
+        foregroundColor: AppTheme.surfaceWhite,
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                'Logowanie',
-                style: textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryDark,
-                ),
+              const SizedBox(height: 40),
+              const Icon(
+                Icons.lock_outline,
+                size: 80,
+                color: AppTheme.brandOrange,
               ),
-              const SizedBox(height: 8),
-
-                  Text(
-                    'Wprowadź poświadczenia dostępu do systemu',
-                    style: textTheme.bodyLarge?.copyWith(
-                      color: AppTheme.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  
-                  TextFormField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
-                    decoration: const InputDecoration(
-                      labelText: 'Adres e-mail',
-                      prefixIcon: Icon(Icons.email_outlined),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: _isPasswordObscured,
-                    textInputAction: TextInputAction.done,
-                    decoration: InputDecoration(
-                      labelText: 'Hasło',
-                      prefixIcon: const Icon(Icons.lock_outline),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _isPasswordObscured 
-                              ? Icons.visibility_outlined 
-                              : Icons.visibility_off_outlined,
-                        ),
-                        onPressed: () {
-                          // Wyzwolenie przebudowy drzewa widgetów
-                          setState(() {
-                            _isPasswordObscured = !_isPasswordObscured;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                  
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {}, // Pusty wskaźnik funkcji
-                      child: const Text('Problem z logowaniem?'),
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  
-                  ElevatedButton(
-                    onPressed: () {}, // Pusty wskaźnik funkcji
-                    child: const Text('Zaloguj się'),
-                  ),
-                ],
+              const SizedBox(height: 32),
+              
+              CustomTextField(
+                label: 'Adres E-mail',
+                icon: Icons.email_outlined,
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
               ),
-            ),
+              const SizedBox(height: 20),
+              
+              CustomTextField(
+                label: 'Hasło',
+                icon: Icons.password_outlined,
+                controller: _passwordController,
+                isPassword: true,
+              ),
+              const SizedBox(height: 32),
+              
+              PrimaryButton(
+                label: 'Zaloguj system',
+                onPressed: _handleLogin,
+              ),
+              
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Powrót do ekranu powitalnego'),
+              ),
+            ],
           ),
-        );
+        ),
+      ),
+    );
   }
 }
