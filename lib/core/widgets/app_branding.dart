@@ -16,7 +16,7 @@ class AppBranding extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: AppTheme.brandOrange.withOpacity(0.3),
+                color: AppTheme.brandOrange,
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
