@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:relay_app/core/theme/app_theme.dart';
+import 'package:relay_app/core/services/auth_service.dart'; // Dodany import serwisu
 import 'package:relay_app/features/account/presentation/screens/account_screen.dart';
+import 'package:relay_app/features/authentication/presentation/screens/login_screen.dart'; // Dodany import ekranu logowania
 import 'package:relay_app/features/qr_scanner/presentation/screens/qr_scanner_screen.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -31,16 +33,42 @@ class MainDrawer extends StatelessWidget {
           ),
           const Spacer(),
           const Divider(),
-          _DrawerItem(
-            icon: Icons.account_circle_rounded,
-            title: 'Profil',
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const AccountScreen()),
-              );
+
+          FutureBuilder<String?>(
+            future: AuthService().getToken(),
+            builder: (context, snapshot) {
+              final bool isLoggedIn = snapshot.hasData && snapshot.data != null;
+
+              if (isLoggedIn) {
+                return _DrawerItem(
+                  icon: Icons.account_circle_rounded,
+                  title: 'Profil',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const AccountScreen(),
+                      ),
+                    );
+                  },
+                );
+              } else {
+                return _DrawerItem(
+                  icon: Icons.login_rounded,
+                  title: 'Zaloguj się',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const LoginScreen(),
+                      ),
+                    );
+                  },
+                );
+              }
             },
           ),
+
           const SizedBox(height: 16),
           _DrawerItem(
             icon: Icons.settings_outlined,
