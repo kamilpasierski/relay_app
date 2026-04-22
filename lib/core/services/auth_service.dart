@@ -15,4 +15,8 @@ class AuthService {
   Future<void> logout() async {
     await _storage.delete(key: _tokenKey);
   }
+
+  Future<void> clearSession() async {
+    await _storage.delete(key: _tokenKey);
+  }
 }

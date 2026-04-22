@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:relay_app/core/theme/app_theme.dart';
+import 'package:relay_app/features/account/presentation/screens/account_screen.dart';
 import 'package:relay_app/features/qr_scanner/presentation/screens/qr_scanner_screen.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -20,16 +21,27 @@ class MainDrawer extends StatelessWidget {
             icon: Icons.qr_code_scanner,
             title: 'Skaner kodów QR',
             onTap: () {
-                Navigator.pop(context);
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const QrScannerScreen(),
-                  ),
-                );
-              },
+              Navigator.pop(context);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const QrScannerScreen(),
+                ),
+              );
+            },
           ),
           const Spacer(),
           const Divider(),
+          _DrawerItem(
+            icon: Icons.account_circle_rounded,
+            title: 'Profil',
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const AccountScreen()),
+              );
+            },
+          ),
+          const SizedBox(height: 16),
           _DrawerItem(
             icon: Icons.settings_outlined,
             title: 'Ustawienia',
