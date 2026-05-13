@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:relay_app/core/theme/app_theme.dart';
 import 'package:relay_app/core/services/scan_history_service.dart';
-import 'package:relay_app/features/faults/presentation/screens/fault_report_screen.dart';
+import 'package:relay_app/features/devices/presentation/screens/device_profile_screen.dart';
 import 'package:relay_app/core/widgets/confirmation_dialog.dart';
 
 class ScanHistoryScreen extends StatefulWidget {
@@ -131,7 +131,7 @@ class _ScanHistoryScreenState extends State<ScanHistoryScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          FaultReportScreen(deviceId: item['uuid']),
+                          DeviceProfileScreen(deviceId: item['uuid']),
                     ),
                   );
                 },

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:relay_app/core/theme/app_theme.dart';
 import 'package:relay_app/core/widgets/primary_button.dart';
 import 'package:relay_app/core/services/device_service.dart';
-import 'package:relay_app/core/services/scan_history_service.dart'; // DODAJ IMPORT
+import 'package:relay_app/features/devices/presentation/screens/device_profile_screen.dart';
 
 class FaultReportScreen extends StatefulWidget {
   final String deviceId;
@@ -23,18 +23,7 @@ class _FaultReportScreenState extends State<FaultReportScreen> {
   @override
   void initState() {
     super.initState();
-    _deviceFuture = _fetchAndLogDevice();
-  }
-
-  Future<Map<String, dynamic>?> _fetchAndLogDevice() async {
-    final device = await DeviceService().getDeviceDetails(widget.deviceId);
-
-    if (device != null) {
-      final deviceName = device['name'] ?? 'Nieznane urządzenie';
-      await ScanHistoryService().addScan(widget.deviceId, deviceName);
-    }
-
-    return device;
+    _deviceFuture = DeviceService().getDeviceDetails(widget.deviceId);
   }
 
   @override

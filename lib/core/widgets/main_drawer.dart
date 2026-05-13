@@ -3,6 +3,7 @@ import 'package:relay_app/core/theme/app_theme.dart';
 import 'package:relay_app/core/services/auth_service.dart'; // Dodany import serwisu
 import 'package:relay_app/features/account/presentation/screens/account_screen.dart';
 import 'package:relay_app/features/authentication/presentation/screens/login_screen.dart'; // Dodany import ekranu logowania
+import 'package:relay_app/features/devices/presentation/screens/device_profile_screen.dart';
 import 'package:relay_app/features/home/presentation/screens/home_screen.dart';
 import 'package:relay_app/features/qr_scanner/presentation/screens/qr_scanner_screen.dart';
 import 'package:relay_app/features/scan_history/presentation/screens/scan_history_screen.dart';
@@ -34,8 +35,9 @@ class MainDrawer extends StatelessWidget {
               Navigator.pop(context);
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const FaultReportScreen(
+                  builder: (context) => const DeviceProfileScreen(
                     deviceId: '019e209b-51e8-73cb-88b6-886757298f5b',
+                    isFromScanner: true,
                   ),
                 ),
               );
