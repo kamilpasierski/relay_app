@@ -3,7 +3,10 @@ import 'package:relay_app/core/theme/app_theme.dart';
 import 'package:relay_app/core/services/auth_service.dart'; // Dodany import serwisu
 import 'package:relay_app/features/account/presentation/screens/account_screen.dart';
 import 'package:relay_app/features/authentication/presentation/screens/login_screen.dart'; // Dodany import ekranu logowania
+import 'package:relay_app/features/home/presentation/screens/home_screen.dart';
 import 'package:relay_app/features/qr_scanner/presentation/screens/qr_scanner_screen.dart';
+import 'package:relay_app/features/scan_history/presentation/screens/scan_history_screen.dart';
+import 'package:relay_app/features/faults/presentation/screens/fault_report_screen.dart';
 
 class MainDrawer extends StatelessWidget {
   const MainDrawer({super.key});
@@ -17,16 +20,35 @@ class MainDrawer extends StatelessWidget {
           _DrawerItem(
             icon: Icons.dashboard_outlined,
             title: 'Strona główna',
-            onTap: () => Navigator.pop(context),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
+              );
+            },
           ),
           _DrawerItem(
             icon: Icons.qr_code_scanner,
-            title: 'Skaner kodów QR',
+            title: 'Skaner kodów QR (Test)',
             onTap: () {
               Navigator.pop(context);
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const QrScannerScreen(),
+                  builder: (context) => const FaultReportScreen(
+                    deviceId: '019e209b-51e8-73cb-88b6-886757298f5b',
+                  ),
+                ),
+              );
+            },
+          ),
+          _DrawerItem(
+            icon: Icons.history_rounded,
+            title: 'Historia skanowania',
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const ScanHistoryScreen(),
                 ),
               );
             },
