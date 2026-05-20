@@ -76,6 +76,13 @@ class AccountScreen extends StatelessWidget {
                   const SizedBox(height: 48),
 
                   PrimaryButton(
+                    label: 'Zmień hasło',
+                    onPressed: () =>
+                        Navigator.pushNamed(context, '/change-password'),
+                  ),
+                  const SizedBox(height: 16),
+
+                  PrimaryButton(
                     label: 'Wyloguj się',
                     onPressed: () => _handleLogout(context),
                   ),

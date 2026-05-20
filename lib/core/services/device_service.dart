@@ -38,7 +38,7 @@ class DeviceService {
     final token = await AuthService().getToken();
     if (token == null) return null;
 
-    final url = Uri.parse('${ApiConfig.baseUrl}/devices/$uuid');
+    final url = Uri.parse('${ApiConfig.baseUrl}/public/devices/$uuid');
 
     try {
       final response = await http.get(

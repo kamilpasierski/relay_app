@@ -46,4 +46,107 @@ class AuthService {
     }
     return null;
   }
+
+  Future<bool> changePassword(
+    String currentPassword,
+    String newPassword,
+    String newPasswordConfirmation,
+  ) async {
+    final token = await getToken();
+    if (token == null) return false;
+
+    final url = Uri.parse('${ApiConfig.baseUrl}/user/password');
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'current_password': currentPassword,
+          'password': newPassword,
+          'password_confirmation': newPasswordConfirmation,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        debugPrint(
+          'Błąd zmiany hasła. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Błąd połączenia: $e');
+      return false;
+    }
+  }
+
+  Future<bool> sendMobileResetPin(String email) async {
+    final url = Uri.parse('${ApiConfig.baseUrl}/public/mobile/password/email');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'email': email}),
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        debugPrint(
+          'Błąd wysyłania PIN-u. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Błąd połączenia: $e');
+      return false;
+    }
+  }
+
+  Future<bool> resetPasswordWithPin(
+    String email,
+    String pin,
+    String password,
+    String passwordConfirmation,
+  ) async {
+    final url = Uri.parse('${ApiConfig.baseUrl}/public/mobile/password/reset');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'email': email,
+          'pin': pin,
+          'password': password,
+          'password_confirmation': passwordConfirmation,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        debugPrint(
+          'Błąd resetu hasła. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Błąd połączenia: $e');
+      return false;
+    }
+  }
 }

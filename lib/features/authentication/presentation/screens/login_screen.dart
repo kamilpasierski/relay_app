@@ -7,6 +7,7 @@ import 'package:relay_app/core/widgets/custom_text_field.dart';
 import 'package:relay_app/core/widgets/primary_button.dart';
 import 'package:relay_app/features/home/presentation/screens/home_screen.dart';
 import 'package:relay_app/core/services/auth_service.dart';
+import 'package:relay_app/features/authentication/presentation/screens/forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -119,7 +120,25 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _passwordController,
                 isPassword: true,
               ),
-              const SizedBox(height: 32),
+
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: _isLoading
+                      ? null
+                      : () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const ForgotPasswordScreen(),
+                            ),
+                          );
+                        },
+                  child: const Text('Zapomniałeś hasła? Resetuj'),
+                ),
+              ),
+              const SizedBox(height: 16),
 
               _isLoading
                   ? const Center(

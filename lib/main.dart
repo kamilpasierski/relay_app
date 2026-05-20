@@ -3,6 +3,7 @@ import 'package:relay_app/core/theme/app_theme.dart';
 import 'package:relay_app/core/services/auth_service.dart';
 import 'package:relay_app/features/authentication/presentation/screens/welcome_screen.dart';
 import 'package:relay_app/features/home/presentation/screens/home_screen.dart';
+import 'package:relay_app/features/account/presentation/screens/change_password_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,7 @@ class RelayApp extends StatelessWidget {
       routes: {
         '/welcome': (context) => const WelcomeScreen(),
         '/home': (context) => const HomeScreen(),
+        '/change-password': (context) => const ChangePasswordScreen(),
       },
     );
   }
