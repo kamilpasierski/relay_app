@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Używamy nowo dodanej paczki intl
 import 'package:relay_app/core/theme/app_theme.dart';
 import 'package:relay_app/core/services/device_service.dart';
 import 'package:relay_app/core/services/scan_history_service.dart';
@@ -38,14 +39,6 @@ class _DeviceProfileScreenState extends State<DeviceProfileScreen> {
     }
 
     return device;
-  }
-
-  String _formatDate(String isoString) {
-    final date = DateTime.parse(isoString).toLocal();
-    final day = date.day.toString().padLeft(2, '0');
-    final month = date.month.toString().padLeft(2, '0');
-    final year = date.year;
-    return '$day.$month.$year';
   }
 
   @override
@@ -109,7 +102,7 @@ class _DeviceProfileScreenState extends State<DeviceProfileScreen> {
                         _buildInfoRow(
                           Icons.build,
                           'Model:',
-                          '${device['brand']} ${device['model']}',
+                          '${device['brand'] ?? ''} ${device['model'] ?? ''}',
                         ),
                         _buildInfoRow(
                           Icons.qr_code,
@@ -132,7 +125,9 @@ class _DeviceProfileScreenState extends State<DeviceProfileScreen> {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 const SizedBox(height: 16),
-                ...events.map((event) => _buildTimelineItem(event)),
+
+                // Wywołanie wydzielonego komponentu osi czasu z przekazaniem danych z API
+                DeviceTimelineList(events: events),
               ],
             ),
           );
@@ -185,10 +180,39 @@ class _DeviceProfileScreenState extends State<DeviceProfileScreen> {
       ),
     );
   }
+}
 
-  Widget _buildTimelineItem(Map<String, dynamic> event) {
+// WYDZIELONY KOMPONENT OSI CZASU
+class DeviceTimelineList extends StatelessWidget {
+  final List<Map<String, dynamic>> events;
+
+  const DeviceTimelineList({super.key, required this.events});
+
+  @override
+  Widget build(BuildContext context) {
+    if (events.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 16.0),
+        child: Text('Brak zarejestrowanych zdarzeń dla tego urządzenia.'),
+      );
+    }
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: events.length,
+      itemBuilder: (context, index) {
+        final event = events[index];
+        final isLast = index == events.length - 1;
+        return _buildTimelineItem(event, isLast);
+      },
+    );
+  }
+
+  Widget _buildTimelineItem(Map<String, dynamic> event, bool isLast) {
     Color dotColor = Colors.blue;
     IconData dotIcon = Icons.info;
+
     if (event['type'] == 'fault') {
       dotColor = AppTheme.alertRedText;
       dotIcon = Icons.warning;
@@ -200,6 +224,12 @@ class _DeviceProfileScreenState extends State<DeviceProfileScreen> {
       dotIcon = Icons.play_circle_filled;
     }
 
+    String formattedDateStr = 'N/A';
+    if (event['date'] != null) {
+      final parsedDate = DateTime.parse(event['date']).toLocal();
+      formattedDateStr = DateFormat('dd.MM.yyyy HH:mm').format(parsedDate);
+    }
+
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -209,9 +239,11 @@ class _DeviceProfileScreenState extends State<DeviceProfileScreen> {
             child: Column(
               children: [
                 Icon(dotIcon, color: dotColor, size: 24),
-                Expanded(
-                  child: Container(width: 2, color: Colors.grey.shade300),
-                ),
+                if (!isLast)
+                  Expanded(
+                    child: Container(width: 2, color: Colors.grey.shade300),
+                  ),
+                if (isLast) const Expanded(child: SizedBox()),
               ],
             ),
           ),
@@ -222,7 +254,7 @@ class _DeviceProfileScreenState extends State<DeviceProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _formatDate(event['date']),
+                    formattedDateStr,
                     style: TextStyle(
                       color: Colors.grey.shade600,
                       fontSize: 12,
@@ -231,7 +263,7 @@ class _DeviceProfileScreenState extends State<DeviceProfileScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    event['title'],
+                    event['title'] ?? 'Zdarzenie',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -239,12 +271,12 @@ class _DeviceProfileScreenState extends State<DeviceProfileScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    event['description'],
+                    event['description'] ?? 'Brak opisu.',
                     style: TextStyle(color: Colors.grey.shade800),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Użytkownik: ${event['user']}',
+                    'Użytkownik: ${event['user'] ?? 'Nieznany'}',
                     style: const TextStyle(
                       fontSize: 12,
                       fontStyle: FontStyle.italic,
