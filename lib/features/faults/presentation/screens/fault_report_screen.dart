@@ -65,7 +65,7 @@ class _FaultReportScreenState extends State<FaultReportScreen> {
     setState(() => _isLoadingReport = true);
 
     final url = Uri.parse(
-      '${ApiConfig.baseUrl}/public/devices/${widget.deviceId}/faults',
+      '${ApiConfig.baseUrl}/devices/${widget.deviceId}/faults',
     );
 
     try {

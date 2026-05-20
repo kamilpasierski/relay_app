@@ -56,15 +56,37 @@ class MainDrawer extends StatelessWidget {
               );
             },
           ),
-          _DrawerItem(
-            icon: Icons.engineering_outlined,
-            title: 'Panel Serwisanta',
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const TechnicianFaultsScreen(),
-                ),
+          FutureBuilder<Map<String, dynamic>?>(
+            future: AuthService().getCurrentUser(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SizedBox.shrink();
+              }
+
+              final userData = snapshot.data;
+
+              final bool hasServiceAccess =
+                  userData != null &&
+                  (userData['is_service'] == true ||
+                      userData['is_service'] == 1 ||
+                      userData['is_admin'] == true ||
+                      userData['is_admin'] == 1);
+
+              if (!hasServiceAccess) {
+                return const SizedBox.shrink();
+              }
+
+              return _DrawerItem(
+                icon: Icons.engineering_outlined,
+                title: 'Panel Serwisanta',
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const TechnicianFaultsScreen(),
+                    ),
+                  );
+                },
               );
             },
           ),

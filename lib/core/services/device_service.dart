@@ -4,56 +4,27 @@ import 'package:http/http.dart' as http;
 import 'package:relay_app/core/config/api_config.dart';
 import 'package:relay_app/core/services/auth_service.dart';
 
-Future<Map<String, dynamic>?> getDeviceDetails(String uuid) async {
-  final token = await AuthService().getToken();
-  if (token == null) return null;
-
-  final url = Uri.parse('${ApiConfig.baseUrl}/devices/$uuid');
-
-  try {
-    final response = await http.get(
-      url,
-      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
-    );
-
-    if (response.statusCode == 200) {
-      final decodedData = jsonDecode(response.body);
-      final deviceData = decodedData.containsKey('data')
-          ? decodedData['data']
-          : decodedData;
-
-      return deviceData;
-    } else {
-      debugPrint('Błąd pobierania urządzenia. Status: ${response.statusCode}');
-    }
-  } catch (e) {
-    debugPrint('Błąd połączenia: $e');
-  }
-  return null;
-}
-
 class DeviceService {
   Future<Map<String, dynamic>?> getDeviceDetails(String uuid) async {
     final token = await AuthService().getToken();
-    if (token == null) return null;
+    final url = Uri.parse('${ApiConfig.baseUrl}/devices/$uuid');
 
-    final url = Uri.parse('${ApiConfig.baseUrl}/public/devices/$uuid');
+    final headers = {'Accept': 'application/json'};
+
+    if (token != null) {
+      headers['Authorization'] = 'Bearer $token';
+    }
 
     try {
-      final response = await http.get(
-        url,
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
+      final response = await http.get(url, headers: headers);
 
       if (response.statusCode == 200) {
         final decodedData = jsonDecode(response.body);
-
-        return decodedData.containsKey('data')
+        final deviceData = decodedData.containsKey('data')
             ? decodedData['data']
             : decodedData;
+
+        return deviceData;
       } else {
         debugPrint(
           'Błąd pobierania urządzenia. Status: ${response.statusCode}',
@@ -81,11 +52,11 @@ class DeviceService {
             .map((event) => Map<String, dynamic>.from(event))
             .toList();
       } else {
-        print('Błąd API (${response.statusCode}): ${response.body}');
+        debugPrint('Błąd API (${response.statusCode}): ${response.body}');
         throw Exception('Nie udało się pobrać historii urządzenia.');
       }
     } catch (e) {
-      print('Wyjątek podczas pobierania zdarzeń: $e');
+      debugPrint('Wyjątek podczas pobierania zdarzeń: $e');
       throw Exception('Błąd połączenia z serwerem: $e');
     }
   }

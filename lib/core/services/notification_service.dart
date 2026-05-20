@@ -55,9 +55,9 @@ class NotificationService {
 
       if (notification != null && android != null) {
         _localNotifications.show(
-          id: notification.hashCode, // DODANE: id:
-          title: notification.title, // DODANE: title:
-          body: notification.body, // DODANE: body:
+          id: notification.hashCode,
+          title: notification.title,
+          body: notification.body,
           notificationDetails: NotificationDetails(
             android: AndroidNotificationDetails(
               _channel.id,
