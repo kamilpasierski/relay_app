@@ -3,9 +3,22 @@ import 'package:relay_app/core/theme/app_theme.dart';
 import 'package:relay_app/features/qr_scanner/presentation/screens/qr_scanner_screen.dart';
 import '../../../../core/widgets/main_drawer.dart';
 import '../../../../core/widgets/nav_button.dart';
+import '../../../../core/services/notification_service.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    NotificationService().initNotifications();
+  }
 
   @override
   Widget build(BuildContext context) {
