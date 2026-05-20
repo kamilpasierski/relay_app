@@ -126,7 +126,6 @@ class _DeviceProfileScreenState extends State<DeviceProfileScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Wywołanie wydzielonego komponentu osi czasu z przekazaniem danych z API
                 DeviceTimelineList(events: events),
               ],
             ),
@@ -182,7 +181,6 @@ class _DeviceProfileScreenState extends State<DeviceProfileScreen> {
   }
 }
 
-// WYDZIELONY KOMPONENT OSI CZASU
 class DeviceTimelineList extends StatelessWidget {
   final List<Map<String, dynamic>> events;
 
