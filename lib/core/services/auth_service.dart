@@ -149,4 +149,28 @@ class AuthService {
       return false;
     }
   }
+
+  Future<Map<String, dynamic>?> getCurrentUser() async {
+    final token = await getToken();
+    if (token == null) return null;
+
+    final url = Uri.parse('${ApiConfig.baseUrl}/user');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }
+    } catch (e) {
+      debugPrint('Błąd pobierania profilu użytkownika: $e');
+    }
+    return null;
+  }
 }

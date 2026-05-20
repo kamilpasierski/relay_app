@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:relay_app/core/theme/app_theme.dart';
-import 'package:relay_app/core/services/auth_service.dart'; // Dodany import serwisu
+import 'package:relay_app/core/services/auth_service.dart';
 import 'package:relay_app/features/account/presentation/screens/account_screen.dart';
-import 'package:relay_app/features/authentication/presentation/screens/login_screen.dart'; // Dodany import ekranu logowania
+import 'package:relay_app/features/authentication/presentation/screens/login_screen.dart';
 import 'package:relay_app/features/devices/presentation/screens/device_profile_screen.dart';
 import 'package:relay_app/features/home/presentation/screens/home_screen.dart';
 import 'package:relay_app/features/qr_scanner/presentation/screens/qr_scanner_screen.dart';
 import 'package:relay_app/features/scan_history/presentation/screens/scan_history_screen.dart';
 import 'package:relay_app/features/faults/presentation/screens/fault_report_screen.dart';
+import 'package:relay_app/features/faults/presentation/screens/technician_faults_screen.dart';
 
 class MainDrawer extends StatelessWidget {
   const MainDrawer({super.key});
@@ -51,6 +52,18 @@ class MainDrawer extends StatelessWidget {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => const ScanHistoryScreen(),
+                ),
+              );
+            },
+          ),
+          _DrawerItem(
+            icon: Icons.engineering_outlined,
+            title: 'Panel Serwisanta',
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const TechnicianFaultsScreen(),
                 ),
               );
             },
