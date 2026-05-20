@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:relay_app/core/theme/app_theme.dart';
 import 'package:relay_app/core/services/auth_service.dart';
 import 'package:relay_app/features/authentication/presentation/screens/welcome_screen.dart';
@@ -7,6 +9,8 @@ import 'package:relay_app/features/account/presentation/screens/change_password_
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   final authService = AuthService();
   final String? token = await authService.getToken();
