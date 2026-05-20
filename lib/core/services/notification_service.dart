@@ -27,7 +27,6 @@ class NotificationService {
     const InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
 
-    // FIX 1: Dodany argument nazwany "settings:"
     await _localNotifications.initialize(settings: initializationSettings);
 
     await _localNotifications
@@ -55,7 +54,6 @@ class NotificationService {
       AndroidNotification? android = message.notification?.android;
 
       if (notification != null && android != null) {
-        // FIX 2: Dodany argument nazwany "notificationDetails:"
         _localNotifications.show(
           id: notification.hashCode, // DODANE: id:
           title: notification.title, // DODANE: title:
