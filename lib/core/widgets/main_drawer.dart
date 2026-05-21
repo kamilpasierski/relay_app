@@ -7,7 +7,6 @@ import 'package:relay_app/features/devices/presentation/screens/device_profile_s
 import 'package:relay_app/features/home/presentation/screens/home_screen.dart';
 import 'package:relay_app/features/qr_scanner/presentation/screens/qr_scanner_screen.dart';
 import 'package:relay_app/features/scan_history/presentation/screens/scan_history_screen.dart';
-import 'package:relay_app/features/faults/presentation/screens/fault_report_screen.dart';
 import 'package:relay_app/features/faults/presentation/screens/technician_faults_screen.dart';
 
 class MainDrawer extends StatelessWidget {

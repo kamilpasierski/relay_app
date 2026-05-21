@@ -191,12 +191,7 @@ class AuthService {
         scopes,
       );
 
-      final String? providerToken = clientAuth?.accessToken;
-
-      if (providerToken == null) {
-        debugPrint('Nie udało się pobrać accessToken z Google.');
-        return false;
-      }
+      final String providerToken = clientAuth.accessToken;
 
       final response = await http.post(
         Uri.parse('${ApiConfig.baseUrl}/auth/google'),

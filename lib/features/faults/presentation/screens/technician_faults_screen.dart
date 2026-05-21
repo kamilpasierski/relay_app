@@ -188,7 +188,7 @@ class _TechnicianFaultsScreenState extends State<TechnicianFaultsScreen> {
                         leading: CircleAvatar(
                           backgroundColor: _getStatusColor(
                             status,
-                          ).withOpacity(0.1),
+                          ).withValues(alpha: .1),
                           child: Icon(
                             Icons.report_problem,
                             color: _getStatusColor(status),
@@ -275,7 +275,7 @@ class _TechnicianFaultsScreenState extends State<TechnicianFaultsScreen> {
     return ChoiceChip(
       label: Text(label),
       selected: _selectedFilter == filterType,
-      selectedColor: AppTheme.brandOrange.withOpacity(0.2),
+      selectedColor: AppTheme.brandOrange.withValues(alpha: .2),
       onSelected: (bool selected) {
         if (selected) {
           setState(() => _selectedFilter = filterType);

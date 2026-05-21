@@ -122,8 +122,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 onToggleVisibility: () =>
                     setState(() => _obscureNew = !_obscureNew),
                 validator: (val) {
-                  if (val == null || val.length < 8)
+                  if (val == null || val.length < 8) {
                     return 'Hasło musi mieć min. 8 znaków';
+                  }
                   return null;
                 },
               ),
@@ -134,8 +135,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 onToggleVisibility: () =>
                     setState(() => _obscureConfirm = !_obscureConfirm),
                 validator: (val) {
-                  if (val != _newPasswordController.text)
+                  if (val != _newPasswordController.text) {
                     return 'Hasła nie pasują do siebie';
+                  }
                   return null;
                 },
               ),
