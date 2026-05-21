@@ -29,5 +29,8 @@ jobs:
       - name: Resolve external dependencies
         run: flutter pub get
 
+      - name: Decode Firebase Options from Secret
+        run: echo "${{ secrets.FIREBASE_OPTIONS_BASE64 }}" | base64 --decode > lib/firebase_options.dart
+
       - name: Execute linter daemon
         run: flutter analyze
