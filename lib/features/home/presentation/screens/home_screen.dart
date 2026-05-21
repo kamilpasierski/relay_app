@@ -44,7 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
             'Skaner kodów QR',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          // Odpalamy automatyczny proces skanowania, wycinania UUID i przekierowania
           onPressed: () async {
             final String? scannedUuid = await Navigator.of(context)
                 .push<String>(
