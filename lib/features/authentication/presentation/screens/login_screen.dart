@@ -85,6 +85,30 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<void> _handleGoogleSignIn() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final bool success = await AuthService().signInWithGoogle();
+
+      if (success) {
+        if (!mounted) return;
+        debugPrint('Zalogowano pomyślnie przez Google OAuth.');
+
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      } else {
+        _showError('Logowanie Google zostało przerwane lub wystąpił błąd.');
+      }
+    } catch (e) {
+      debugPrint('Wyjątek Google Auth w UI: $e');
+      _showError('Wystąpił nieoczekiwany błąd podczas logowania Google.');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,9 +170,54 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: AppTheme.brandOrange,
                       ),
                     )
-                  : PrimaryButton(
-                      label: 'Zaloguj się',
-                      onPressed: _handleLogin,
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        PrimaryButton(
+                          label: 'Zaloguj się',
+                          onPressed: _handleLogin,
+                        ),
+                        const SizedBox(height: 16),
+
+                        const Row(
+                          children: [
+                            Expanded(child: Divider()),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Text(
+                                'lub',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                            Expanded(child: Divider()),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+
+                        OutlinedButton.icon(
+                          icon: const Icon(
+                            Icons.g_mobiledata,
+                            size: 30,
+                            color: Colors.red,
+                          ),
+                          label: const Text(
+                            'Zaloguj przez Google',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.primaryDark,
+                            ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            side: const BorderSide(color: Colors.grey),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          onPressed: _isLoading ? null : _handleGoogleSignIn,
+                        ),
+                      ],
                     ),
 
               const SizedBox(height: 16),

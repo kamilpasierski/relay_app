@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:relay_app/core/config/api_config.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final _storage = const FlutterSecureStorage();
@@ -172,5 +173,53 @@ class AuthService {
       debugPrint('Błąd pobierania profilu użytkownika: $e');
     }
     return null;
+  }
+
+  Future<bool> signInWithGoogle() async {
+    try {
+      final googleSignIn = GoogleSignIn.instance;
+
+      await googleSignIn.initialize();
+
+      final googleUser = await googleSignIn.authenticate();
+
+      final scopes = ['email', 'profile'];
+      var clientAuth = await googleUser.authorizationClient
+          .authorizationForScopes(scopes);
+
+      clientAuth ??= await googleUser.authorizationClient.authorizeScopes(
+        scopes,
+      );
+
+      final String? providerToken = clientAuth?.accessToken;
+
+      if (providerToken == null) {
+        debugPrint('Nie udało się pobrać accessToken z Google.');
+        return false;
+      }
+
+      final response = await http.post(
+        Uri.parse('${ApiConfig.baseUrl}/auth/google'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({'provider_token': providerToken}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['token'] != null) {
+          await saveToken(data['token']);
+          return true;
+        }
+      } else {
+        debugPrint('Błąd Google Auth na backendzie: ${response.body}');
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Anulowano logowanie lub wystąpił wyjątek: $e');
+      return false;
+    }
   }
 }
