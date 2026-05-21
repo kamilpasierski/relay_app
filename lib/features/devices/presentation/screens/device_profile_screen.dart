@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Używamy nowo dodanej paczki intl
+import 'package:intl/intl.dart';
 import 'package:relay_app/core/theme/app_theme.dart';
 import 'package:relay_app/core/services/device_service.dart';
 import 'package:relay_app/core/services/scan_history_service.dart';
@@ -32,6 +32,7 @@ class _DeviceProfileScreenState extends State<DeviceProfileScreen> {
 
   Future<Map<String, dynamic>?> _fetchAndLogDevice() async {
     final device = await DeviceService().getDeviceDetails(widget.deviceId);
+    debugPrint('PROFIL URZĄDZENIA - STRZAŁ POD ID: ${widget.deviceId}');
 
     if (device != null && widget.isFromScanner) {
       final deviceName = device['name'] ?? 'Nieznane urządzenie';

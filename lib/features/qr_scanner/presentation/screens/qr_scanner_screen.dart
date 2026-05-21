@@ -11,6 +11,7 @@ class QrScannerScreen extends StatefulWidget {
 
 class _QrScannerScreenState extends State<QrScannerScreen> {
   final MobileScannerController _cameraController = MobileScannerController();
+  bool _isCodeProcessed = false;
 
   @override
   void dispose() {
@@ -25,23 +26,29 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
         title: const Text('Detekcja QR'),
         backgroundColor: AppTheme.primaryDark,
         foregroundColor: AppTheme.surfaceWhite,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.flashlight_on),
-            onPressed: () => _cameraController.toggleTorch(),
-          ),
-          IconButton(
-            icon: const Icon(Icons.cameraswitch),
-            onPressed: () => _cameraController.switchCamera(),
-          ),
-        ],
       ),
       body: Stack(
         children: [
           MobileScanner(
             controller: _cameraController,
             onDetect: (capture) {
-              debugPrint('Zarejestrowano wektor wejściowy z matrycy optycznej');
+              if (_isCodeProcessed) return;
+
+              final List<Barcode> barcodes = capture.barcodes;
+              if (barcodes.isNotEmpty && barcodes.first.rawValue != null) {
+                final String rawValue = barcodes.first.rawValue!;
+
+                setState(() {
+                  _isCodeProcessed = true;
+                });
+
+                String cleanUuid = rawValue;
+                if (rawValue.contains('/')) {
+                  cleanUuid = rawValue.split('/').last.trim();
+                }
+
+                Navigator.of(context).pop(cleanUuid);
+              }
             },
           ),
           Center(

@@ -31,17 +31,29 @@ class MainDrawer extends StatelessWidget {
           ),
           _DrawerItem(
             icon: Icons.qr_code_scanner,
-            title: 'Skaner kodów QR (Test)',
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const DeviceProfileScreen(
-                    deviceId: '019e209b-51e8-73cb-88b6-886757298f5b',
-                    isFromScanner: true,
+            title: 'Skaner kodów QR',
+            onTap: () async {
+              final String? scannedUuid = await Navigator.of(context)
+                  .push<String>(
+                    MaterialPageRoute(
+                      builder: (context) => const QrScannerScreen(),
+                    ),
+                  );
+
+              if (!context.mounted) return;
+
+              Navigator.of(context).pop();
+
+              if (scannedUuid != null) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => DeviceProfileScreen(
+                      deviceId: scannedUuid,
+                      isFromScanner: true,
+                    ),
                   ),
-                ),
-              );
+                );
+              }
             },
           ),
           _DrawerItem(
