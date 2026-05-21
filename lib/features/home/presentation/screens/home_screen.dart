@@ -1,5 +1,3 @@
-// lib/features/home/presentation/screens/home_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:relay_app/core/theme/app_theme.dart';
 import 'package:relay_app/core/services/auth_service.dart';
@@ -11,6 +9,7 @@ import 'package:relay_app/features/scan_history/presentation/screens/scan_histor
 import 'package:relay_app/features/account/presentation/screens/account_screen.dart';
 import 'package:relay_app/features/authentication/presentation/screens/login_screen.dart';
 import 'package:relay_app/features/faults/presentation/screens/technician_faults_screen.dart';
+import 'package:relay_app/features/settings/presentation/screens/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -145,8 +144,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.settings_outlined,
                 title: 'Ustawienia',
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Ustawienia wkrótce...')),
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const SettingsScreen(),
+                    ),
                   );
                 },
               ),

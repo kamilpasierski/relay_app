@@ -29,13 +29,7 @@ class AccountScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.surfaceWhite,
-      appBar: AppBar(
-        title: const Text('Profil'),
-        centerTitle: true,
-        backgroundColor: AppTheme.primaryDark,
-        foregroundColor: AppTheme.surfaceWhite,
-      ),
+      appBar: AppBar(title: const Text('Profil'), centerTitle: true),
       body: FutureBuilder<Map<String, dynamic>?>(
         future: AuthService().getUserProfile(),
         builder: (context, snapshot) {
@@ -56,20 +50,20 @@ class AccountScreen extends StatelessWidget {
                 children: [
                   const SizedBox(height: 40),
 
-                  const Icon(
+                  Icon(
                     Icons.account_circle_rounded,
                     size: 120,
-                    color: AppTheme.primaryDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
 
                   const SizedBox(height: 16),
 
                   Text(
                     email,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
 

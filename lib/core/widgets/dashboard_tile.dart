@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:relay_app/core/theme/app_theme.dart';
 
 class DashboardTile extends StatelessWidget {
   final IconData icon;
@@ -22,7 +21,7 @@ class DashboardTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: backgroundColor ?? Colors.white,
+      color: backgroundColor ?? Theme.of(context).cardColor,
       borderRadius: BorderRadius.circular(16),
       elevation: 4,
       shadowColor: Colors.black.withValues(alpha: 0.1),
@@ -34,7 +33,11 @@ class DashboardTile extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 48, color: iconColor ?? AppTheme.primaryDark),
+              Icon(
+                icon,
+                size: 48,
+                color: iconColor ?? Theme.of(context).colorScheme.onSurface,
+              ),
               const SizedBox(height: 12),
               Text(
                 title,
@@ -42,7 +45,7 @@ class DashboardTile extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: textColor ?? AppTheme.primaryDark,
+                  color: textColor ?? Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ],

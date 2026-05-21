@@ -35,7 +35,7 @@ class AppBranding extends StatelessWidget {
             fontSize: 32,
             fontWeight: FontWeight.w900,
             letterSpacing: 4.0,
-            color: AppTheme.primaryDark,
+            color: AppTheme.brandOrange,
           ),
         ),
       ],

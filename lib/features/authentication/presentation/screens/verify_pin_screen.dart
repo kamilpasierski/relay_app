@@ -84,13 +84,10 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppTheme.surfaceWhite,
-      appBar: AppBar(
-        title: const Text('Wprowadź kod PIN'),
-        backgroundColor: AppTheme.primaryDark,
-        foregroundColor: AppTheme.surfaceWhite,
-      ),
+      appBar: AppBar(title: const Text('Wprowadź kod PIN')),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -104,15 +101,24 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                 color: AppTheme.brandOrange,
               ),
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 'Ustaw nowe hasło',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
               Text(
                 'Wysłaliśmy 6-cyfrowy kod PIN na adres:\n${widget.email}',
-                style: const TextStyle(fontSize: 16, color: Colors.grey),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: theme.brightness == Brightness.dark
+                      ? AppTheme.textSecondaryDark
+                      : AppTheme.textSecondary,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),

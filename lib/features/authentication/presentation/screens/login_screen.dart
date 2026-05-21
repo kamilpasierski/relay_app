@@ -113,13 +113,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: AppTheme.surfaceWhite,
-      appBar: AppBar(
-        title: const Text('Logowanie'),
-        backgroundColor: AppTheme.primaryDark,
-        foregroundColor: AppTheme.surfaceWhite,
-      ),
+      appBar: AppBar(title: const Text('Logowanie')),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -181,17 +179,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        const Row(
+                        Row(
                           children: [
-                            Expanded(child: Divider()),
+                            const Expanded(child: Divider()),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16.0),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                              ),
                               child: Text(
                                 'lub',
-                                style: TextStyle(color: Colors.grey),
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? AppTheme.textSecondaryDark
+                                      : Colors.grey,
+                                ),
                               ),
                             ),
-                            Expanded(child: Divider()),
+                            const Expanded(child: Divider()),
                           ],
                         ),
                         const SizedBox(height: 16),
@@ -202,17 +206,21 @@ class _LoginScreenState extends State<LoginScreen> {
                             size: 30,
                             color: Colors.red,
                           ),
-                          label: const Text(
+                          label: Text(
                             'Zaloguj przez Google',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: AppTheme.primaryDark,
+                              color: theme.colorScheme.onSurface,
                             ),
                           ),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 12),
-                            side: const BorderSide(color: Colors.grey),
+                            side: BorderSide(
+                              color: isDarkMode
+                                  ? AppTheme.borderDark
+                                  : Colors.grey,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),

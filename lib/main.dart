@@ -12,6 +12,8 @@ void main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  await AppTheme.initTheme();
+
   final authService = AuthService();
   final String? token = await authService.getToken();
 
@@ -29,15 +31,24 @@ class RelayApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Relay Mobile',
-      theme: AppTheme.lightTheme,
-      home: startScreen,
-      debugShowCheckedModeBanner: true,
-      routes: {
-        '/welcome': (context) => const WelcomeScreen(),
-        '/home': (context) => const HomeScreen(),
-        '/change-password': (context) => const ChangePasswordScreen(),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: AppTheme.themeNotifier,
+      builder: (context, ThemeMode currentMode, child) {
+        return MaterialApp(
+          title: 'Relay Mobile',
+          debugShowCheckedModeBanner: true,
+
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: currentMode,
+
+          home: startScreen,
+          routes: {
+            '/welcome': (context) => const WelcomeScreen(),
+            '/home': (context) => const HomeScreen(),
+            '/change-password': (context) => const ChangePasswordScreen(),
+          },
+        );
       },
     );
   }
