@@ -69,8 +69,9 @@ class _LoginScreenState extends State<LoginScreen> {
         await authService.saveToken(token);
         if (!mounted) return;
 
-        Navigator.of(context).pushReplacement(
+        Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const HomeScreen()),
+          (Route<dynamic> route) => false,
         );
       } else if (response.statusCode == 401) {
         _showError('Nieprawidłowe dane logowania.');
@@ -95,8 +96,9 @@ class _LoginScreenState extends State<LoginScreen> {
         if (!mounted) return;
         debugPrint('Zalogowano pomyślnie przez Google OAuth.');
 
-        Navigator.of(context).pushReplacement(
+        Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const HomeScreen()),
+          (Route<dynamic> route) => false,
         );
       } else {
         _showError('Logowanie Google zostało przerwane lub wystąpił błąd.');
