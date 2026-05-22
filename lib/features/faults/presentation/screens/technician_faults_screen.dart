@@ -3,14 +3,16 @@ import 'package:relay_app/core/theme/app_theme.dart';
 import 'package:relay_app/core/services/fault_service.dart';
 
 class TechnicianFaultsScreen extends StatefulWidget {
-  const TechnicianFaultsScreen({super.key});
+  final FaultService faultService;
+
+  TechnicianFaultsScreen({super.key, FaultService? faultService})
+    : faultService = faultService ?? FaultService();
 
   @override
   State<TechnicianFaultsScreen> createState() => _TechnicianFaultsScreenState();
 }
 
 class _TechnicianFaultsScreenState extends State<TechnicianFaultsScreen> {
-  final FaultService _faultService = FaultService();
   String _selectedFilter = 'all';
 
   late Future<List<Map<String, dynamic>>> _faultsFuture;
@@ -23,7 +25,7 @@ class _TechnicianFaultsScreenState extends State<TechnicianFaultsScreen> {
 
   void _refreshFaults() {
     setState(() {
-      _faultsFuture = _faultService.getFaults();
+      _faultsFuture = widget.faultService.getFaults();
     });
   }
 
@@ -90,7 +92,7 @@ class _TechnicianFaultsScreenState extends State<TechnicianFaultsScreen> {
 
   Future<void> _updateStatus(int id, String newStatus) async {
     Navigator.pop(context);
-    final success = await _faultService.updateFaultStatus(id, newStatus);
+    final success = await widget.faultService.updateFaultStatus(id, newStatus);
 
     if (mounted) {
       if (success) {

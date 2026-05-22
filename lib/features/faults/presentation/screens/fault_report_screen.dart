@@ -9,8 +9,19 @@ import 'package:relay_app/core/services/auth_service.dart';
 
 class FaultReportScreen extends StatefulWidget {
   final String deviceId;
+  final DeviceService deviceService;
+  final AuthService authService;
+  final http.Client httpClient;
 
-  const FaultReportScreen({super.key, required this.deviceId});
+  FaultReportScreen({
+    super.key,
+    required this.deviceId,
+    DeviceService? deviceService,
+    AuthService? authService,
+    http.Client? httpClient,
+  }) : deviceService = deviceService ?? DeviceService(),
+       authService = authService ?? AuthService(),
+       httpClient = httpClient ?? http.Client();
 
   @override
   State<FaultReportScreen> createState() => _FaultReportScreenState();
@@ -33,12 +44,12 @@ class _FaultReportScreenState extends State<FaultReportScreen> {
   @override
   void initState() {
     super.initState();
-    _deviceFuture = DeviceService().getDeviceDetails(widget.deviceId);
+    _deviceFuture = widget.deviceService.getDeviceDetails(widget.deviceId);
     _loadUserData();
   }
 
   Future<void> _loadUserData() async {
-    final user = await AuthService().getCurrentUser();
+    final user = await widget.authService.getCurrentUser();
     if (mounted) {
       setState(() {
         _currentUser = user;
@@ -69,7 +80,7 @@ class _FaultReportScreenState extends State<FaultReportScreen> {
     );
 
     try {
-      final response = await http.post(
+      final response = await widget.httpClient.post(
         url,
         headers: {
           'Content-Type': 'application/json',
@@ -228,7 +239,7 @@ class _FaultReportScreenState extends State<FaultReportScreen> {
                         const SizedBox(height: 16),
                         TextFormField(
                           controller: _contactController,
-                          readOnly: true, // Blokada edycji
+                          readOnly: true,
                           decoration: InputDecoration(
                             labelText: 'E-mail kontaktowy',
                             filled: true,
