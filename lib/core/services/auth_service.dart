@@ -220,19 +220,31 @@ class AuthService {
 
   Future<bool> signInWithGoogle() async {
     try {
-      final googleSignIn = GoogleSignIn.instance;
-      await googleSignIn.initialize();
-      final googleUser = await googleSignIn.authenticate();
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
-      final scopes = ['email', 'profile'];
-      var clientAuth = await googleUser.authorizationClient
-          .authorizationForScopes(scopes);
-
-      clientAuth ??= await googleUser.authorizationClient.authorizeScopes(
-        scopes,
+      await googleSignIn.initialize(
+        serverClientId:
+            '174977229271-gcfhv7vkko8rh9ocnraa5ft7v50p4fqh.apps.googleusercontent.com',
       );
 
-      final String providerToken = clientAuth.accessToken;
+      await googleSignIn.signOut();
+
+      final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
+
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+
+      final clientAuth = await googleUser.authorizationClient.authorizeScopes([
+        'email',
+        'https://www.googleapis.com/auth/userinfo.profile',
+      ]);
+
+      final String? providerToken =
+          googleAuth.idToken ?? clientAuth.accessToken;
+
+      if (providerToken == null) {
+        debugPrint('Błąd: Nie udało się wyciągnąć tokena od dostawcy Google.');
+        return false;
+      }
 
       final response = await httpClient.post(
         Uri.parse('${ApiConfig.baseUrl}/auth/google'),
@@ -250,11 +262,19 @@ class AuthService {
           return true;
         }
       } else {
-        debugPrint('Błąd Google Auth na backendzie: ${response.body}');
+        debugPrint(
+          'Błąd Google Auth na backendzie: ${response.statusCode} - ${response.body}',
+        );
       }
       return false;
     } catch (e) {
-      debugPrint('Anulowano logowanie lub wystąpił błąd: $e');
+      if (e is GoogleSignInException &&
+          e.code == GoogleSignInExceptionCode.canceled) {
+        debugPrint('Logowanie Google anulowane przez użytkownika.');
+        return false;
+      }
+
+      debugPrint('Wystąpił nieoczekiwany błąd podczas logowania Google: $e');
       return false;
     }
   }
