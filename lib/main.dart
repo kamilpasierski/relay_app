@@ -46,7 +46,7 @@ class RelayApp extends StatelessWidget {
           routes: {
             '/welcome': (context) => const WelcomeScreen(),
             '/home': (context) => const HomeScreen(),
-            '/change-password': (context) => const ChangePasswordScreen(),
+            '/change-password': (context) => ChangePasswordScreen(),
           },
         );
       },

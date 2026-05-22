@@ -4,7 +4,10 @@ import 'package:relay_app/core/widgets/primary_button.dart';
 import 'package:relay_app/core/services/auth_service.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
-  const ChangePasswordScreen({super.key});
+  final AuthService authService;
+
+  ChangePasswordScreen({super.key, AuthService? authService})
+    : authService = authService ?? AuthService();
 
   @override
   State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
@@ -34,7 +37,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
     setState(() => _isLoading = true);
 
-    final success = await AuthService().changePassword(
+    final success = await widget.authService.changePassword(
       _currentPasswordController.text,
       _newPasswordController.text,
       _confirmPasswordController.text,

@@ -130,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           .push(
                             MaterialPageRoute(
                               builder: (context) => isLoggedIn
-                                  ? const AccountScreen()
+                                  ? AccountScreen()
                                   : const LoginScreen(),
                             ),
                           )

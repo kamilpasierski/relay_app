@@ -5,7 +5,10 @@ import 'package:relay_app/core/widgets/primary_button.dart';
 import 'package:relay_app/core/widgets/confirmation_dialog.dart';
 
 class AccountScreen extends StatelessWidget {
-  const AccountScreen({super.key});
+  final AuthService authService;
+
+  AccountScreen({super.key, AuthService? authService})
+    : authService = authService ?? AuthService();
 
   void _handleLogout(BuildContext context) {
     showDialog(
@@ -15,7 +18,7 @@ class AccountScreen extends StatelessWidget {
         message: 'Czy na pewno chcesz się wylogować?',
         confirmLabel: 'Wyloguj',
         onConfirm: () async {
-          await AuthService().clearSession();
+          await authService.clearSession();
           if (context.mounted) {
             Navigator.of(
               context,
@@ -31,7 +34,7 @@ class AccountScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Profil'), centerTitle: true),
       body: FutureBuilder<Map<String, dynamic>?>(
-        future: AuthService().getUserProfile(),
+        future: authService.getUserProfile(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
