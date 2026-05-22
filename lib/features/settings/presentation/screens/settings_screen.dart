@@ -5,7 +5,9 @@ import 'package:relay_app/core/config/api_config.dart';
 import 'package:relay_app/core/services/auth_service.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  final bool isAdmin;
+
+  const SettingsScreen({super.key, required this.isAdmin});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -21,6 +23,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
+    _isAdmin = widget.isAdmin;
     _loadUserProfile();
   }
 
@@ -174,11 +177,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
             ),
             const Divider(),
-            SwitchListTile(
-              secondary: const Icon(Icons.security_outlined),
+
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.security_outlined),
               title: const Text('Dwustopniowa autentykacja (2FA)'),
-              value: _is2FAEnabled ?? false,
-              onChanged: _is2FALoading ? null : _toggle2FA,
+
+              trailing: _is2FAEnabled == null
+                  ? const Padding(
+                      padding: EdgeInsets.only(right: 16.0),
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    )
+                  : Switch(
+                      value: _is2FAEnabled!,
+                      onChanged: _is2FALoading ? null : _toggle2FA,
+                    ),
             ),
           ],
           const SizedBox(height: 24),

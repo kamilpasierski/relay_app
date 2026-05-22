@@ -140,14 +140,26 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
 
-              DashboardTile(
-                icon: Icons.settings_outlined,
-                title: 'Ustawienia',
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const SettingsScreen(),
-                    ),
+              FutureBuilder<Map<String, dynamic>?>(
+                future: AuthService().getCurrentUser(),
+                builder: (context, snapshot) {
+                  final userData = snapshot.data;
+                  final bool isAdmin =
+                      userData != null &&
+                      (userData['is_admin'] == true ||
+                          userData['is_admin'] == 1);
+
+                  return DashboardTile(
+                    icon: Icons.settings_outlined,
+                    title: 'Ustawienia',
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              SettingsScreen(isAdmin: isAdmin),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
