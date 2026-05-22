@@ -7,6 +7,7 @@ import 'package:relay_app/core/widgets/custom_text_field.dart';
 import 'package:relay_app/core/widgets/primary_button.dart';
 import 'package:relay_app/features/home/presentation/screens/home_screen.dart';
 import 'package:relay_app/core/services/auth_service.dart';
+import 'package:relay_app/features/authentication/presentation/screens/two_factor_screen.dart';
 import 'package:relay_app/features/authentication/presentation/screens/forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -62,17 +63,38 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+
+        if (data['requires_2fa'] == true &&
+            data['intermediate_token'] != null) {
+          final String tokenTymczasowy = data['intermediate_token'];
+
+          debugPrint('Wymagane 2FA. Przekierowanie do ekranu kodu.');
+          if (!mounted) return;
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  TwoFactorScreen(intermediateToken: tokenTymczasowy),
+            ),
+          );
+          return;
+        }
+
         final token = data['access_token'];
 
-        debugPrint('System autoryzowany. Token: $token');
+        if (token != null) {
+          debugPrint('System autoryzowany. Token: $token');
+          await authService.saveToken(token);
+          if (!mounted) return;
 
-        await authService.saveToken(token);
-        if (!mounted) return;
-
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-          (Route<dynamic> route) => false,
-        );
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            (Route<dynamic> route) => false,
+          );
+        } else {
+          _showError('Błąd autoryzacji: Serwer nie zwrócił tokenu dostępu.');
+        }
       } else if (response.statusCode == 401) {
         _showError('Nieprawidłowe dane logowania.');
       } else {

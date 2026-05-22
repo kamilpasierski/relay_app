@@ -25,6 +25,44 @@ class AuthService {
     await _storage.delete(key: _tokenKey);
   }
 
+  Future<bool> verifyTwoFactorCode(
+    String intermediateToken,
+    String code,
+  ) async {
+    final url = Uri.parse('${ApiConfig.baseUrl}/auth/2fa/verify');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'intermediate_token': intermediateToken,
+          'code': code,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['access_token'] != null) {
+          await saveToken(data['access_token']);
+          return true;
+        }
+      } else {
+        debugPrint(
+          'Błąd 2FA. Status: ${response.statusCode}, Body: ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Błąd połączenia 2FA: $e');
+      return false;
+    }
+    return false;
+  }
+
   Future<Map<String, dynamic>?> getUserProfile() async {
     final token = await getToken();
     if (token == null) return null;
@@ -178,9 +216,7 @@ class AuthService {
   Future<bool> signInWithGoogle() async {
     try {
       final googleSignIn = GoogleSignIn.instance;
-
       await googleSignIn.initialize();
-
       final googleUser = await googleSignIn.authenticate();
 
       final scopes = ['email', 'profile'];
@@ -190,7 +226,6 @@ class AuthService {
       clientAuth ??= await googleUser.authorizationClient.authorizeScopes(
         scopes,
       );
-
       final String providerToken = clientAuth.accessToken;
 
       final response = await http.post(
@@ -213,7 +248,85 @@ class AuthService {
       }
       return false;
     } catch (e) {
-      debugPrint('Anulowano logowanie lub wystąpił wyjątek: $e');
+      debugPrint('Anulowano logowanie lub wystąpił błąd: $e');
+      return false;
+    }
+  }
+
+  Future<bool?> get2FAStatus() async {
+    final token = await getToken();
+    if (token == null) return null;
+
+    final url = Uri.parse('${ApiConfig.baseUrl}/user/2fa/status');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['two_factor_enabled'] ?? false;
+      }
+    } catch (e) {
+      debugPrint('Błąd pobierania statusu 2FA: $e');
+    }
+    return null;
+  }
+
+  Future<Map<String, dynamic>?> enable2FA() async {
+    final token = await getToken();
+    if (token == null) return null;
+
+    final url = Uri.parse('${ApiConfig.baseUrl}/auth/2fa/setup');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      } else {
+        debugPrint(
+          'Błąd włączania 2FA: ${response.statusCode} - ${response.body}',
+        );
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Wyjątek sieciowy podczas włączania 2FA: $e');
+      return null;
+    }
+  }
+
+  Future<bool> disable2FA() async {
+    final token = await getToken();
+    if (token == null) return false;
+
+    final url = Uri.parse('${ApiConfig.baseUrl}/auth/2fa/disable');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      debugPrint('Wyjątek sieciowy podczas wyłączania 2FA: $e');
       return false;
     }
   }
