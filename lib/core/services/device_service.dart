@@ -5,8 +5,15 @@ import 'package:relay_app/core/config/api_config.dart';
 import 'package:relay_app/core/services/auth_service.dart';
 
 class DeviceService {
+  final http.Client httpClient;
+  final AuthService authService;
+
+  DeviceService({http.Client? httpClient, AuthService? authService})
+    : httpClient = httpClient ?? http.Client(),
+      authService = authService ?? AuthService();
+
   Future<Map<String, dynamic>?> getDeviceDetails(String uuid) async {
-    final token = await AuthService().getToken();
+    final token = await authService.getToken();
     final url = Uri.parse('${ApiConfig.baseUrl}/devices/$uuid');
 
     final headers = {'Accept': 'application/json'};
@@ -16,7 +23,7 @@ class DeviceService {
     }
 
     try {
-      final response = await http.get(url, headers: headers);
+      final response = await httpClient.get(url, headers: headers);
 
       if (response.statusCode == 200) {
         final decodedData = jsonDecode(response.body);
@@ -40,7 +47,7 @@ class DeviceService {
     final url = Uri.parse('${ApiConfig.baseUrl}/devices/$uuid/events');
 
     try {
-      final response = await http.get(
+      final response = await httpClient.get(
         url,
         headers: {'Accept': 'application/json'},
       );

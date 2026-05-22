@@ -5,8 +5,22 @@ class ScanHistoryService {
   static const String _key = 'scan_history';
   static const int _maxItems = 15;
 
+  final SharedPreferences? _preferences;
+  SharedPreferences? _cachedPreferences;
+
+  ScanHistoryService({SharedPreferences? preferences})
+    : _preferences = preferences;
+
+  Future<SharedPreferences> _getPreferences() async {
+    if (_preferences != null) {
+      return _preferences;
+    }
+    _cachedPreferences ??= await SharedPreferences.getInstance();
+    return _cachedPreferences!;
+  }
+
   Future<void> addScan(String uuid, String deviceName) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = await _getPreferences();
     final String? historyJson = prefs.getString(_key);
 
     List<dynamic> history = historyJson != null ? jsonDecode(historyJson) : [];
@@ -33,7 +47,7 @@ class ScanHistoryService {
   }
 
   Future<List<Map<String, dynamic>>> getHistory() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = await _getPreferences();
     final String? historyJson = prefs.getString(_key);
 
     if (historyJson == null) return [];
@@ -42,7 +56,7 @@ class ScanHistoryService {
   }
 
   Future<void> clearHistory() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = await _getPreferences();
     await prefs.remove(_key);
   }
 }

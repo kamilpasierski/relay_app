@@ -6,23 +6,28 @@ import 'package:relay_app/core/config/api_config.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
-  final _storage = const FlutterSecureStorage();
+  final http.Client httpClient;
+  final FlutterSecureStorage storage;
   static const _tokenKey = 'auth_token';
 
+  AuthService({http.Client? httpClient, FlutterSecureStorage? storage})
+    : httpClient = httpClient ?? http.Client(),
+      storage = storage ?? const FlutterSecureStorage();
+
   Future<void> saveToken(String token) async {
-    await _storage.write(key: _tokenKey, value: token);
+    await storage.write(key: _tokenKey, value: token);
   }
 
   Future<String?> getToken() async {
-    return await _storage.read(key: _tokenKey);
+    return await storage.read(key: _tokenKey);
   }
 
   Future<void> logout() async {
-    await _storage.delete(key: _tokenKey);
+    await storage.delete(key: _tokenKey);
   }
 
   Future<void> clearSession() async {
-    await _storage.delete(key: _tokenKey);
+    await storage.delete(key: _tokenKey);
   }
 
   Future<bool> verifyTwoFactorCode(
@@ -32,7 +37,7 @@ class AuthService {
     final url = Uri.parse('${ApiConfig.baseUrl}/auth/2fa/verify');
 
     try {
-      final response = await http.post(
+      final response = await httpClient.post(
         url,
         headers: {
           'Accept': 'application/json',
@@ -68,7 +73,7 @@ class AuthService {
     if (token == null) return null;
 
     try {
-      final response = await http.get(
+      final response = await httpClient.get(
         Uri.parse(ApiConfig.userProfile),
         headers: {
           'Content-Type': 'application/json',
@@ -97,7 +102,7 @@ class AuthService {
     final url = Uri.parse('${ApiConfig.baseUrl}/user/password');
 
     try {
-      final response = await http.put(
+      final response = await httpClient.put(
         url,
         headers: {
           'Accept': 'application/json',
@@ -129,7 +134,7 @@ class AuthService {
     final url = Uri.parse('${ApiConfig.baseUrl}/public/mobile/password/email');
 
     try {
-      final response = await http.post(
+      final response = await httpClient.post(
         url,
         headers: {
           'Accept': 'application/json',
@@ -161,7 +166,7 @@ class AuthService {
     final url = Uri.parse('${ApiConfig.baseUrl}/public/mobile/password/reset');
 
     try {
-      final response = await http.post(
+      final response = await httpClient.post(
         url,
         headers: {
           'Accept': 'application/json',
@@ -196,7 +201,7 @@ class AuthService {
     final url = Uri.parse('${ApiConfig.baseUrl}/user');
 
     try {
-      final response = await http.get(
+      final response = await httpClient.get(
         url,
         headers: {
           'Accept': 'application/json',
@@ -226,9 +231,10 @@ class AuthService {
       clientAuth ??= await googleUser.authorizationClient.authorizeScopes(
         scopes,
       );
+
       final String providerToken = clientAuth.accessToken;
 
-      final response = await http.post(
+      final response = await httpClient.post(
         Uri.parse('${ApiConfig.baseUrl}/auth/google'),
         headers: {
           'Content-Type': 'application/json',
@@ -260,7 +266,7 @@ class AuthService {
     final url = Uri.parse('${ApiConfig.baseUrl}/user/2fa/status');
 
     try {
-      final response = await http.get(
+      final response = await httpClient.get(
         url,
         headers: {
           'Accept': 'application/json',
@@ -285,7 +291,7 @@ class AuthService {
     final url = Uri.parse('${ApiConfig.baseUrl}/auth/2fa/setup');
 
     try {
-      final response = await http.post(
+      final response = await httpClient.post(
         url,
         headers: {
           'Accept': 'application/json',
@@ -315,7 +321,7 @@ class AuthService {
     final url = Uri.parse('${ApiConfig.baseUrl}/auth/2fa/disable');
 
     try {
-      final response = await http.post(
+      final response = await httpClient.post(
         url,
         headers: {
           'Accept': 'application/json',
