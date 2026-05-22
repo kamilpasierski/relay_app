@@ -6,8 +6,16 @@ import 'package:relay_app/core/services/auth_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   final bool isAdmin;
+  final AuthService authService;
+  final http.Client httpClient;
 
-  const SettingsScreen({super.key, required this.isAdmin});
+  SettingsScreen({
+    super.key,
+    required this.isAdmin,
+    AuthService? authService,
+    http.Client? httpClient,
+  }) : authService = authService ?? AuthService(),
+       httpClient = httpClient ?? http.Client();
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -18,7 +26,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _is2FALoading = false;
   bool? _isAdmin;
   bool? _is2FAEnabled;
-  final _authService = AuthService();
 
   @override
   void initState() {
@@ -28,8 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _loadUserProfile() async {
-    final profile = await _authService.getUserProfile();
-
+    final profile = await widget.authService.getUserProfile();
     if (profile != null && mounted) {
       setState(() {
         _is2FAEnabled = profile['has_2fa_enabled'] == true;
@@ -45,10 +51,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _testConnection() async {
     setState(() => _isPingLoading = true);
     try {
-      final response = await http
+      final response = await widget.httpClient
           .get(Uri.parse('${ApiConfig.baseUrl}/ping'))
           .timeout(const Duration(seconds: 5));
-
       if (!mounted) return;
       if (response.statusCode == 200) {
         _showSnackBar(
@@ -73,20 +78,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() => _is2FALoading = true);
     try {
       if (value) {
-        final setupData = await _authService.enable2FA();
-
+        final setupData = await widget.authService.enable2FA();
         if (!mounted) return;
-
         if (setupData != null) {
           setState(() => _is2FAEnabled = true);
-
           _showSetupDialog(setupData['secret'], setupData['recovery_codes']);
           _showSnackBar('2FA zostało zainicjalizowane', Colors.green);
         } else {
           _showSnackBar('Nie udało się wygenerować klucza 2FA', Colors.red);
         }
       } else {
-        final success = await _authService.disable2FA();
+        final success = await widget.authService.disable2FA();
         if (!mounted) return;
         if (success) {
           setState(() => _is2FAEnabled = false);
@@ -150,7 +152,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
       appBar: AppBar(title: const Text('Ustawienia')),
       body: ListView(
@@ -177,12 +178,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
             ),
             const Divider(),
-
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.security_outlined),
               title: const Text('Dwustopniowa autentykacja (2FA)'),
-
               trailing: _is2FAEnabled == null
                   ? const Padding(
                       padding: EdgeInsets.only(right: 16.0),
