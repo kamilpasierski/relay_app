@@ -238,13 +238,7 @@ class AuthService {
         'https://www.googleapis.com/auth/userinfo.profile',
       ]);
 
-      final String? providerToken =
-          googleAuth.idToken ?? clientAuth.accessToken;
-
-      if (providerToken == null) {
-        debugPrint('Błąd: Nie udało się wyciągnąć tokena od dostawcy Google.');
-        return false;
-      }
+      final String providerToken = googleAuth.idToken ?? clientAuth.accessToken;
 
       final response = await httpClient.post(
         Uri.parse('${ApiConfig.baseUrl}/auth/google'),
