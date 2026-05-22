@@ -4,6 +4,7 @@ import 'package:relay_app/core/theme/app_theme.dart';
 import 'package:relay_app/core/services/device_service.dart';
 import 'package:relay_app/core/services/scan_history_service.dart';
 import 'package:relay_app/features/faults/presentation/screens/fault_report_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DeviceProfileScreen extends StatefulWidget {
   final String deviceId;
@@ -42,6 +43,20 @@ class _DeviceProfileScreenState extends State<DeviceProfileScreen> {
     return device;
   }
 
+  Future<void> _launchInstructionUrl(String urlString) async {
+    final Uri url = Uri.parse(urlString);
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Nie udało się otworzyć instrukcji.'),
+            backgroundColor: AppTheme.alertRedText,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,6 +84,8 @@ class _DeviceProfileScreenState extends State<DeviceProfileScreen> {
 
           final device = snapshot.data![0] as Map<String, dynamic>;
           final events = snapshot.data![1] as List<Map<String, dynamic>>;
+
+          final String? instructionUrl = device['instruction_url'];
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
@@ -119,6 +136,67 @@ class _DeviceProfileScreenState extends State<DeviceProfileScreen> {
                     ),
                   ),
                 ),
+
+                if (instructionUrl != null && instructionUrl.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () => _launchInstructionUrl(instructionUrl),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: AppTheme.brandOrange.withValues(
+                                  alpha: .1,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(
+                                Icons.menu_book_rounded,
+                                color: AppTheme.brandOrange,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            const Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Instrukcja techniczna',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Kliknij, aby otworzyć dokumentację',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(
+                              Icons.open_in_new_rounded,
+                              color: Colors.grey,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+
                 const SizedBox(height: 32),
 
                 const Text(
