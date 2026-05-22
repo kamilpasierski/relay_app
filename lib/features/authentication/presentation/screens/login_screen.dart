@@ -89,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
           if (!mounted) return;
 
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            MaterialPageRoute(builder: (context) => HomeScreen()),
             (Route<dynamic> route) => false,
           );
         } else {
@@ -119,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
         debugPrint('Zalogowano pomyślnie przez Google OAuth.');
 
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => HomeScreen()),
           (Route<dynamic> route) => false,
         );
       } else {

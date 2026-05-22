@@ -18,7 +18,7 @@ void main() async {
   final String? token = await authService.getToken();
 
   final Widget initialScreen = (token != null)
-      ? const HomeScreen()
+      ? HomeScreen()
       : const WelcomeScreen();
 
   runApp(RelayApp(startScreen: initialScreen));
@@ -45,7 +45,7 @@ class RelayApp extends StatelessWidget {
           home: startScreen,
           routes: {
             '/welcome': (context) => const WelcomeScreen(),
-            '/home': (context) => const HomeScreen(),
+            '/home': (context) => HomeScreen(),
             '/change-password': (context) => ChangePasswordScreen(),
           },
         );

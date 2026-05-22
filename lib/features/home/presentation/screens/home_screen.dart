@@ -12,7 +12,15 @@ import 'package:relay_app/features/faults/presentation/screens/technician_faults
 import 'package:relay_app/features/settings/presentation/screens/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final AuthService authService;
+  final NotificationService notificationService;
+
+  HomeScreen({
+    super.key,
+    AuthService? authService,
+    NotificationService? notificationService,
+  }) : authService = authService ?? AuthService(),
+       notificationService = notificationService ?? NotificationService();
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -22,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    NotificationService().initNotifications();
+    widget.notificationService.initNotifications();
   }
 
   void _refreshScreen() {
@@ -39,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
         automaticallyImplyLeading: false,
         actions: [
           FutureBuilder<Map<String, dynamic>?>(
-            future: AuthService().getCurrentUser(),
+            future: widget.authService.getCurrentUser(),
             builder: (context, snapshot) {
               final userData = snapshot.data;
               final bool hasServiceAccess =
@@ -101,7 +109,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                 },
               ),
-
               DashboardTile(
                 icon: Icons.history_rounded,
                 title: 'Historia',
@@ -113,9 +120,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               ),
-
               FutureBuilder<String?>(
-                future: AuthService().getToken(),
+                future: widget.authService.getToken(),
                 builder: (context, snapshot) {
                   final bool isLoggedIn =
                       snapshot.hasData && snapshot.data != null;
@@ -139,9 +145,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               ),
-
               FutureBuilder<Map<String, dynamic>?>(
-                future: AuthService().getCurrentUser(),
+                future: widget.authService.getCurrentUser(),
                 builder: (context, snapshot) {
                   final userData = snapshot.data;
                   final bool isAdmin =

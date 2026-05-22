@@ -42,7 +42,7 @@ class _TwoFactorScreenState extends State<TwoFactorScreen> {
 
     if (success && mounted) {
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => HomeScreen()),
         (route) => false,
       );
     } else {
