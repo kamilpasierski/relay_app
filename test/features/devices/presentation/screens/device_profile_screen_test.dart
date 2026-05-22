@@ -142,10 +142,7 @@ void main() {
       testWidgets('handles missing device fields with placeholder text', (
         WidgetTester tester,
       ) async {
-        final deviceData = {
-          'name': 'Device',
-          // other fields missing
-        };
+        final deviceData = {'name': 'Device'};
 
         await tester.pumpWidget(
           MaterialApp(
@@ -348,19 +345,16 @@ void main() {
       testWidgets('displays error message when device fetch fails', (
         WidgetTester tester,
       ) async {
-        // 1. Tworzymy zmienną z błędem, dopasowaną do typu FutureBuildera
         final errorFuture = Future<Map<String, dynamic>?>.error(
           Exception('Network error'),
         );
 
-        // 2. Uciszamy framework testowy (zwracamy null, co pasuje do typu nullable)
         errorFuture.catchError((_) => null);
 
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
               body: FutureBuilder<Map<String, dynamic>?>(
-                // 3. Wrzucamy uciszoną zmienną
                 future: errorFuture,
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
@@ -377,10 +371,8 @@ void main() {
           ),
         );
 
-        // Renderujemy klatkę ze stanem błędu
         await tester.pumpAndSettle();
 
-        // Asercja
         expect(
           find.text('Nie udało się załadować profilu urządzenia.'),
           findsOneWidget,
