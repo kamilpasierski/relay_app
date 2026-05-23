@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:relay_app/core/config/api_config.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_messaging/firebase_messaging.dart'; // DODANE
 
 class AuthService {
   final http.Client httpClient;
@@ -30,6 +31,31 @@ class AuthService {
     await storage.delete(key: _tokenKey);
   }
 
+  Future<void> updateFCMToken() async {
+    try {
+      final String? fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        debugPrint("Pobrano token FCM: $fcmToken");
+        final String? authToken = await getToken();
+
+        if (authToken != null) {
+          await httpClient.post(
+            Uri.parse('${ApiConfig.baseUrl}/user/fcm-token'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $authToken',
+            },
+            body: jsonEncode({'fcm_token': fcmToken}),
+          );
+          debugPrint("Token FCM wysłany do bazy danych!");
+        }
+      }
+    } catch (e) {
+      debugPrint("Błąd podczas aktualizacji tokenu FCM: $e");
+    }
+  }
+
   Future<bool> verifyTwoFactorCode(
     String intermediateToken,
     String code,
@@ -53,6 +79,7 @@ class AuthService {
         final data = jsonDecode(response.body);
         if (data['access_token'] != null) {
           await saveToken(data['access_token']);
+          await updateFCMToken(); // DODANE: Wysyłka tokenu powiadomień po 2FA
           return true;
         }
       } else {
@@ -253,6 +280,7 @@ class AuthService {
         final data = jsonDecode(response.body);
         if (data['token'] != null) {
           await saveToken(data['token']);
+          await updateFCMToken();
           return true;
         }
       } else {
