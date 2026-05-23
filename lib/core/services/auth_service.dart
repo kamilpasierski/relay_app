@@ -224,7 +224,7 @@ class AuthService {
 
       await googleSignIn.initialize(
         serverClientId:
-            '174977229271-gcfhv7vkko8rh9ocnraa5ft7v50p4fqh.apps.googleusercontent.com',
+            '174977229271-5ll3fre3aot537hpi17nnt92n9ihorr4.apps.googleusercontent.com',
       );
 
       await googleSignIn.signOut();
